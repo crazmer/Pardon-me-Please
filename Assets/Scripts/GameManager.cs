@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     private float xBound = 13;
     private float zBound = 13;
-    private float zSpawnPos = 14;
+    private float zSpawnPos = 19;
 
     private int enemyCount;
     public int waveCount = 1;
@@ -22,14 +22,12 @@ public class GameManager : MonoBehaviour
 
     public static int score;
 
-    private TextMeshProUGUI showGameName;
+    public GameObject PauseMenu;
+    
     private TextMeshProUGUI scoreText;
-    private TextMeshProUGUI gameOverText;
-    private TextMeshProUGUI showScoreText;
+   
+    
 
-    private Button startButton;
-    private Button quitButton;
-    private Button mainMenuButton;
 
     public bool isGameOver = false;
     public bool isGameOn = false;
@@ -39,49 +37,19 @@ public class GameManager : MonoBehaviour
     {
         score = 0;
 
-        showGameName = GameObject.Find("Show Game Name").GetComponent<TextMeshProUGUI>();
-        scoreText = GameObject.Find("Score Text").GetComponent<TextMeshProUGUI>();
-        gameOverText = GameObject.Find("Game Over Text").GetComponent<TextMeshProUGUI>();
-        showScoreText = GameObject.Find("Show Score Text").GetComponent<TextMeshProUGUI>();
-
-        startButton = GameObject.Find("Start Button").GetComponent<Button>();
-        quitButton = GameObject.Find("Quit Button").GetComponent<Button>();
-        mainMenuButton = GameObject.Find("Main Menu Button").GetComponent<Button>();
-
-        showGameName.gameObject.SetActive(false);
-        startButton.gameObject.SetActive(false);
-        mainMenuButton.gameObject.SetActive(false);
-        quitButton.gameObject.SetActive(false);
-
-        StartCoroutine(PrePlay());
-
-
-
-        startButton.onClick.AddListener(StartGame);
+        
+        scoreText = GameObject.Find("Score Text").GetComponent<TextMeshProUGUI>();    
+        
 
 
         InitiateScreen();
-
+        isGameOn = true;
+        StartGame();
     }
 
-    IEnumerator PrePlay()
-    {
-        yield return new WaitForSeconds(1.5f);
-
-        showGameName.gameObject.SetActive(true);
-
-        yield return new WaitForSeconds(0.5f);
-        startButton.gameObject.SetActive(true);
-    }
 
     public void StartGame()
     {
-        isGameOn = true;
-
-        showGameName.gameObject.SetActive(false);
-        startButton.gameObject.SetActive(false);
-
-
         scoreText.text = "Score: " + score;
     }
 
@@ -100,7 +68,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
-
+        Pause();
 
     }
 
@@ -201,7 +169,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        mainMenuButton.gameObject.SetActive(false);
+        
     }
 
     private void ClearScreenAtEnd()
@@ -217,14 +185,13 @@ public class GameManager : MonoBehaviour
         Destroy(GameObject.FindWithTag("Enemy"));
         Destroy(GameObject.FindWithTag("Powerup"));
         scoreText.text = "";
-        gameOverText.text = "Game Over";
+       
 
         yield return new WaitForSeconds(2.5f);
-        showScoreText.text = "Score: " + score;
+       
 
         yield return new WaitForSeconds(1);
-        mainMenuButton.gameObject.SetActive(true);
-        quitButton.gameObject.SetActive(true);
+        
 
     }
 
@@ -241,6 +208,23 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-
+    public void Pause()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if(Time.timeScale == 1.0f)
+            {
+                Debug.Log("Pause");
+                PauseMenu.SetActive(true);
+                Time.timeScale = 0.0f;
+            }
+             if(Time.timeScale == 0.0f)
+            {
+                PauseMenu.SetActive(false);
+                Time.timeScale = 1.0f;
+            }
+            
+        }
+    }
 
 }

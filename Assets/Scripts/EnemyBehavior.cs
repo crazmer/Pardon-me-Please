@@ -7,12 +7,14 @@ using UnityEngine;
 public class EnemyBehavior : MonoBehaviour
 {
     public float speed;
-    private float zBound = 20f;
+    [SerializeField]private float zBound = 20f;
     private Rigidbody enemyRb;
     private GameObject player;
 
     public int scoreToAdd = 1;
     private GameManager gameManager;
+
+    private bool isprop = true;
 
     // Start is called before the first frame update
     void Start()
@@ -36,12 +38,22 @@ public class EnemyBehavior : MonoBehaviour
 
     public void EnemyControl()
     {
-        if (!gameManager.isGameOver)
+        if (isprop == true)
         {
-            Vector3 lookDirection = (player.transform.position - transform.position).normalized;
-            enemyRb.AddForce(lookDirection * speed);
-        }
+            if (!gameManager.isGameOver)
+            {
+                Vector3 lookDirection = (player.transform.position - transform.position).normalized;
+                enemyRb.AddForce(lookDirection * speed);
 
+                if (lookDirection != Vector3.zero)
+                {
+
+                    Quaternion toRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, 720 * Time.deltaTime);
+                }
+
+            }
+        }
 
         if (transform.position.z <= -zBound)
         {
@@ -65,6 +77,15 @@ public class EnemyBehavior : MonoBehaviour
             gameManager.UpdateScore(scoreToAdd);
 
         }
+
+        if (collision.gameObject.CompareTag("Prop"))
+        {
+            
+          //  isprop = false;
+            
+           
+        }
     }
+
 
 }
